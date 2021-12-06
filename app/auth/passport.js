@@ -12,7 +12,7 @@ passport.use(
       secretOrKey: "meranamemohsinhai",
     },
     function (jwtPayload, done) {
-      console.log("HEREEEE");
+      //console.log("HEREEEE");
       return User.findOne({ where: { id: jwtPayload.id } })
         .then((user) => {
           //console.log("fffff", user);
