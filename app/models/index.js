@@ -24,5 +24,6 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.user_devices = require("./user_device.model.js")(sequelize, Sequelize);
 db.device_codes = require("./device_code.model.js")(sequelize, Sequelize);
 db.active_codes = require("./active_code.model.js")(sequelize, Sequelize);
+db.file_paths = require("./file.model.js")(sequelize, Sequelize);
 
 module.exports = db;

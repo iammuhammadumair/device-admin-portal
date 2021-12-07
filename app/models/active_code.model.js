@@ -9,9 +9,9 @@ module.exports = (sequelize, Sequelize) => {
     codename: {
       type: Sequelize.STRING,
     },
-    device_Id: {
-      type: Sequelize.STRING,
-    },
+    // device_Id: {
+    //   type: Sequelize.STRING,
+    // },
   });
 
   return ActiveCode;
