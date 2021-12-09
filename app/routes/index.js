@@ -7,5 +7,7 @@ module.exports = (app) => {
   require("./login.routes")(app);
   require("./active_code.routes")(app);
   require("./file_upload.routes")(app);
+  require("./device.routes")(app);
+  require("./active_device.routes")(app);
   require("./secretinfo")(app);
 };

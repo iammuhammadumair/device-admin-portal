@@ -1,5 +1,4 @@
 module.exports = (app) => {
-  // const filePath = require("../controllers/file_upload.controller.js");
   const db = require("../models");
   const FilePaths = db.file_paths;
   const Op = db.Sequelize.Op;
@@ -14,31 +13,18 @@ module.exports = (app) => {
       cb(null, "uploads");
     },
     filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
       const id = uuid();
-      const filePath = `images/${id}${ext}`;
-
-      FilePaths.create(filePath)
-        .then((data) => {
-          cb(null, filePath);
-          // res.send(data);
-        })
-        .catch((err) => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating the User.",
-          });
-        });
+      const { originalname } = file;
+      var fileName = `${id}-${originalname}`;
+      cb(null, fileName);
     },
   });
 
   const upload = multer({ storage });
-  // Create a new User Device
+
   router.post("/", upload.single("filePath"), (req, res) => {
-    console.log("reques", req.file);
-    return;
-    //const { filePath } = req.body;
-    // upload.single(filePath);
+    console.log("upload", upload);
+    return res.json({ status: "OK", fileName: req.file.filename });
   });
 
   app.use("/api/file", router);
