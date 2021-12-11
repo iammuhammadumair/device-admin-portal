@@ -13,6 +13,9 @@ module.exports = (app) => {
   //router.get("/published", active_device.findAllPublished);
 
   // Retrieve a single  active_device with id
+  router.get("/available", active_device.findOne);
+
+  // Retrieve a single  active_device with id
   router.get("/:id", active_device.findOne);
 
   // Update a active_device with id
@@ -24,5 +27,5 @@ module.exports = (app) => {
   // Delete all active_device
   router.delete("/", active_device.deleteAll);
 
-  app.use("/api/active_device", router);
+  app.use("/api/active-devices", router);
 };

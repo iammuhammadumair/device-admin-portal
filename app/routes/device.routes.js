@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const devices = require("../controllers/devices.controller.js");
+  const devices = require("../controllers/device.controller.js");
 
   var router = require("express").Router();
 
@@ -11,6 +11,9 @@ module.exports = (app) => {
 
   // Retrieve all published devices
   //router.get("/published", devices.findAllPublished);
+
+  // Retrieve a single  devices with id
+  router.get("/availables", devices.availables);
 
   // Retrieve a single  devices with id
   router.get("/:id", devices.findOne);

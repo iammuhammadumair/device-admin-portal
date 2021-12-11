@@ -14,17 +14,29 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     idle: dbConfig.pool.idle,
   },
 });
+const Device = require("./devices.model.js")(sequelize, Sequelize);
+const ActiveDevice = require("./active_devices.model.js")(sequelize, Sequelize)
+const User = require("./user.model.js")(sequelize, Sequelize);
+const ActiveCode = require("./active_code.model.js")(sequelize, Sequelize);
 
-const db = {};
+//Device Relationships
+Device.hasOne(ActiveDevice , {foreignKey: 'deviceId', 'as' : 'active_device'}); // Will add companyId to user
+ActiveCode.hasOne(ActiveDevice , {foreignKey: 'codeId', 'as' : 'active_device'}); // Will add companyId to user
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
 
-db.users = require("./user.model.js")(sequelize, Sequelize);
-//db.user_devices = require("./user_device.model.js")(sequelize, Sequelize);
-//db.device_codes = require("./active_devices.model.js")(sequelize, Sequelize);
-db.active_codes = require("./active_code.model.js")(sequelize, Sequelize);
-db.devices = require("./devices.model.js")(sequelize, Sequelize);
-db.active_devices = require("./active_devices.model.js")(sequelize, Sequelize);
+//Active Device Relationships
+ActiveDevice.belongsTo(Device , {foreignKey: 'deviceId', 'as' : 'device'}); // Will add companyId to user
+ActiveDevice.belongsTo(ActiveCode , {foreignKey: 'codeId', 'as' : 'code'}); // Will add companyId to user
 
-module.exports = db;
+
+module.exports = {
+    sequelize , 
+    Sequelize,
+    User,
+    Device,
+    ActiveCode,
+    ActiveDevice
+};
+
+
+

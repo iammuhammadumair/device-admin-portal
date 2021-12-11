@@ -1,54 +1,77 @@
-const db = require("../models");
-const ActiveDevice = db.active_devices;
-const Op = db.Sequelize.Op;
+const {
+  ActiveDevice,
+  Sequelize: { Op },
+  Device,
+  ActiveCode,
+} = require("../models");
+
+const {
+  internalServerError,
+  success,
+  unprocessableEntity,
+} = require("../utils/response.util");
 
 // Create and Save a new UserDevice
 exports.create = async (req, res) => {
-  // Validate request
-  if (!req.body.deviceId || !req.body.codeId) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
-  }
+  const { deviceId, codeId, activeDate } = req.body;
+  try {
+    if (!deviceId || !codeId || !activeDate) {
+      return res.send(
+        unprocessableEntity({ message: "Content can not be empty!" })
+      );
+    }
 
-  // Create a ActiveDevice
-  const activeDevice = {
-    deviceId: req.body.deviceId,
-    codeId: req.body.codeId,
-    activeDate: new Date(req.body.activeDate),
-  };
-  console.log("AAAAAAA", activeDevice);
-  // Save ActiveDevice in the database
-  await ActiveDevice.create(activeDevice)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the Active Device.",
-      });
-    });
+    const activeDevice = {
+      deviceId: deviceId,
+      codeId: codeId,
+      activeDate: activeDate,
+    };
+
+    await ActiveDevice.create(activeDevice);
+    return res.send(success());
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
 };
 
 // Retrieve all ActiveDevice from the database.
-exports.findAll = (req, res) => {
-  const deviceId = req.query.deviceId;
-  var condition = deviceId
-    ? { deviceId: { [Op.like]: `%${deviceId}%` } }
-    : null;
+exports.findAll = async (req, res) => {
+  try {
+    const { deviceId, activation } = req.query;
+    let condition = deviceId
+      ? { deviceId: { [Op.like]: `%${deviceId}%` } }
+      : {};
+    condition =
+      activation == 1
+        ? {
+            ...condition,
+            activeDate: {
+              [Op.gte]: new Date(),
+            },
+          }
+        : condition;
+    const devices = await ActiveDevice.findAll({
+      where: condition,
 
-  ActiveDevice.findAll({ where: condition })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving Devices.",
-      });
+      include: [
+        {
+          model: Device,
+          as: "device",
+          required: false,
+        },
+        {
+          model: ActiveCode,
+          as: "code",
+          required: false,
+        },
+      ],
     });
+    return res.send(success({ data: devices }));
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
 };
 // Find a single ActiveDevice with an id
 exports.findOne = (req, res) => {
@@ -72,35 +95,23 @@ exports.findOne = (req, res) => {
 };
 
 // Update a UserDevice by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   const id = req.params.id;
-
-  // Create a ActiveDevice
-  const activeDevice = {
-    deviceId: req.body.deviceId,
-    codeId: req.body.codeId,
-    activeDate: new Date(req.body.activeDate),
-  };
-
-  ActiveDevice.update(activeDevice, {
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Active Device was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update Active Device with id=${id}. Maybe ActiveDevice was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error updating Active Device with id=" + id,
-      });
+  const { deviceId, codeId, activeDate } = req.body;
+  try {
+    const activeDevice = {
+      deviceId: deviceId,
+      codeId: codeId,
+      activeDate: activeDate,
+    };
+    await ActiveDevice.update(activeDevice, {
+      where: { id: id },
     });
+    return res.send(success({ message: "Active Device was updated successfully." }));
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
 };
 // Delete a ActiveDevice with the specified id in the request
 exports.delete = (req, res) => {

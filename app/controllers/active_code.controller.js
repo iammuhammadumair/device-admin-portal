@@ -1,98 +1,79 @@
-const db = require("../models");
-const ActiveCode = db.active_codes;
-const Op = db.Sequelize.Op;
+const { response } = require("express");
+const { ActiveCode, Sequelize } = require("../models");
+const {
+  internalServerError,
+  success,
+  unprocessableEntity,
+} = require("../utils/response.util");
+const Op = Sequelize.Op;
 
-// Create and Save a new UserDevice
 exports.create = async (req, res) => {
-  // Validate request
-  if (!req.body.codename) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
+  const { codename } = req.body;
+  try {
+    // Validate request
+    if (!codename) {
+      return res.send(
+        unprocessableEntity({ message: "Content can not be empty!" })
+      );
+    }
+    // Create a ActiveCode
+    const activeCode = {
+      stdate: new Date(),
+      endate: new Date(),
+      codename: codename,
+      // device_Id: "",
+    };
+
+    await ActiveCode.create(activeCode);
+    return res.send(success({ message: "New Access Code Added" }));
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
   }
 
-  // Create a ActiveCode
-  const activeCode = {
-    stdate: new Date(req.body.stdate),
-    endate: new Date(req.body.endate),
-    codename: req.body.codename,
-    device_Id: "",
-  };
-
   // Save ActiveCode in the database
-  await ActiveCode.create(activeCode)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the ActiveCode.",
-      });
-    });
 };
 
 // Retrieve all ActiveCode from the database.
-exports.findAll = (req, res) => {
-  const name = req.query.codename;
-  var condition = name ? { codename: { [Op.like]: `%${name}%` } } : null;
+exports.findAll = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const condition = name ? { codename: { [Op.like]: `%${name}%` } } : null;
 
-  ActiveCode.findAll({ where: condition })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving userDevices.",
-      });
-    });
+    const codes = await ActiveCode.findAll({ where: condition });
+    return res.send(success({ data: codes }));
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
 };
 // Find a single ActiveCode with an id
-exports.findOne = (req, res) => {
-  const id = req.params.id;
+exports.findOne = async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  ActiveCode.findByPk(id)
-    .then((data) => {
-      if (data) {
-        res.send(data);
-      } else {
-        res.status(404).send({
-          message: `Cannot find Active Code with id=${id}.`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error retrieving UserDevice with id=" + id,
-      });
-    });
+    const code = await ActiveCode.findByPk(id);
+    return res.send(success({ data: code }));
+  } catch (error) {
+    console.log("error =>", error);
+    return response.internalServerError();
+  }
 };
 
 // Update a UserDevice by the id in the request
-exports.update = (req, res) => {
-  const id = req.params.id;
+exports.update = async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  ActiveCode.update(req.body, {
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Active Code was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update ActiveCode with id=${id}. Maybe ActiveCode was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error updating ActiveCode with id=" + id,
-      });
+    await ActiveCode.update({codename  : req.body.codename}, {
+      where: { id: id },
     });
+
+    return res.send(success());
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
 };
 // Delete a ActiveCode with the specified id in the request
 exports.delete = (req, res) => {
@@ -136,4 +117,3 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
-

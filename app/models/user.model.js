@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define("tkapp_user", {
-    userName: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -11,6 +11,14 @@ module.exports = (sequelize, Sequelize) => {
     password: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    created_at: {
+      type: Sequelize.DATE,
+      default: new Date(),
+    },
+    updated_at: {
+      type: Sequelize.DATE,
+      default: new Date(),
     },
   });
 

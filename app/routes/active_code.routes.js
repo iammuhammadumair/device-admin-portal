@@ -24,5 +24,5 @@ module.exports = (app) => {
   // Delete all active_code
   router.delete("/", active_code.deleteAll);
 
-  app.use("/api/active_code", router);
+  app.use("/api/active-codes", router);
 };
