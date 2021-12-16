@@ -8,7 +8,7 @@ export const apiSymbol: InjectionKey<AxiosInstance> = Symbol()
 export function provideApi() {
   // Here we set the base URL for all requests made to the api
   const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
   })
 
   // We set an interceptor for each request to

@@ -144,9 +144,9 @@ useHead({
           </form>
         </div>
 
-        <div class="forgot-link has-text-centered">
+        <!-- <div class="forgot-link has-text-centered">
           <a>Forgot Password?</a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
