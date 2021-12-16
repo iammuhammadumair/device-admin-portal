@@ -1,31 +1,32 @@
-module.exports = (app) => {
-  const devices = require("../controllers/device.controller.js");
+import {Router} from "express";
+import {findOne , findAll , create , update , destroy , destroyAll , availables} from "../controllers/device.controller.js";
+export default (app  , middleware) => {
 
-  var router = require("express").Router();
+  var router = Router();
 
   // Create a new devices
-  router.post("/", devices.create);
+  router.post("/", create);
 
   // Retrieve all devices
-  router.get("/", devices.findAll);
+  router.get("/", findAll);
 
   // Retrieve all published devices
-  //router.get("/published", devices.findAllPublished);
+  //router.get("/published", findAllPublished);
 
   // Retrieve a single  devices with id
-  router.get("/availables", devices.availables);
+  router.get("/availables", availables);
 
   // Retrieve a single  devices with id
-  router.get("/:id", devices.findOne);
+  router.get("/:id", findOne);
 
   // Update a devices with id
-  router.put("/:id", devices.update);
+  router.put("/:id", update);
 
   // Delete a devices with id
-  router.delete("/:id", devices.delete);
+  router.delete("/:id", destroy);
 
   // Delete all devices
-  router.delete("/", devices.deleteAll);
+  router.delete("/", destroyAll);
 
-  app.use("/api/devices", router);
+  app.use("/api/devices",  middleware , router);
 };

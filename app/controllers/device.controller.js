@@ -1,26 +1,22 @@
-const {
-  Device,
-  ActiveDevice,
-  ActiveCode,
-  Sequelize: { Op },
-} = require("../models");
-const {
+import { ActiveDevice, Device, ActiveCode, Sequelize } from "../models";
+
+import {
   internalServerError,
   success,
   unprocessableEntity,
-} = require("../utils/response.util");
-// Create and Save a new UserDevice
+} from "../utils/response.util";
 
-exports.create = async (req, res) => {
-  const { name, deviceImg } = req.body;
+const { Op } = Sequelize;
+const create = async (req, res) => {
+  const { name, mac_code, serial_code } = req.body;
   try {
-    if (!name || deviceImg) {
+    if (!name || !mac_code || !serial_code) {
       return res.send(
         unprocessableEntity({ message: "Content can not be empty!" })
       );
     }
 
-    await Device.create({ name, deviceImg });
+    await Device.create({ name, mac_code, serial_code, user_id: req.user.id });
     return res.send(success({ data: "New Device Added Successfully" }));
   } catch (error) {
     console.log("error =>", error);
@@ -29,14 +25,14 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve all ActiveCode from the database.
-exports.findAll = async (req, res) => {
+const findAll = async (req, res) => {
   try {
     const name = req.query.name;
     let condition = name ? { name: { [Op.like]: `%${name}%` } } : {};
 
     const devices = await Device.findAll({
       where: condition,
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
     return res.send(success({ data: devices }));
   } catch (error) {
@@ -46,7 +42,7 @@ exports.findAll = async (req, res) => {
 };
 
 // Find a single ActiveCode with an id
-exports.findOne = async (req, res) => {
+const findOne = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -59,27 +55,30 @@ exports.findOne = async (req, res) => {
 };
 
 // Update a Device by the id in the request
-exports.update = async (req, res) => {
-  const { name, deviceImg } = req.body;
+const update = async (req, res) => {
+  const { name, mac_code, serial_code } = req.body;
   const id = req.params.id;
   try {
-    if (!name || !deviceImg) {
+    if (!name || !mac_code || !serial_code) {
       return res.send(
         unprocessableEntity({ message: "Content can not be empty!" })
       );
     }
 
-    await Device.update({name , deviceImg}, {
-      where: { id: id },
-    });
+    await Device.update(
+      { name, mac_code, serial_code },
+      {
+        where: { id: id },
+      }
+    );
     return res.send(success());
   } catch (error) {
-      console.log('error =>', error);
+    console.log("error =>", error);
     return res.send(internalServerError());
   }
 };
 // Delete a Device with the specified id in the request
-exports.delete = (req, res) => {
+const destroy = (req, res) => {
   const id = req.params.id;
 
   Device.destroy({
@@ -103,7 +102,7 @@ exports.delete = (req, res) => {
     });
 };
 // Delete all Device from the database.
-exports.deleteAll = (req, res) => {
+const destroyAll = (req, res) => {
   Device.destroy({
     where: {},
     truncate: false,
@@ -121,18 +120,18 @@ exports.deleteAll = (req, res) => {
     });
 };
 
-exports.availables = async (req, res) => {
+const availables = async (req, res) => {
   try {
     const { id } = req.query;
-    let activeDevice = new ActiveDevice();
+    let activeCode = new ActiveCode();
     let deviceIdCheck = {};
-    let codeIdCheck = {};
+    // let codeIdCheck = {};
     if (id) {
-      activeDevice = await ActiveDevice.findOne({ where: { id } });
+      activeCode = await ActiveCode.findOne({ where: { id } });
 
-      if (activeDevice) {
-        deviceIdCheck = { id: activeDevice.deviceId };
-        codeIdCheck = { id: activeDevice.codeId };
+      if (activeCode) {
+        deviceIdCheck = { id: activeCode.device_id };
+        // codeIdCheck = { id: activeDevice.codeId };
       }
     }
 
@@ -143,8 +142,8 @@ exports.availables = async (req, res) => {
       ],
       include: [
         {
-          model: ActiveDevice,
-          as: "active_device",
+          model: ActiveCode,
+          as: "code",
           required: false,
           attributes: [],
         },
@@ -152,39 +151,39 @@ exports.availables = async (req, res) => {
       where: {
         [Op.or]: {
           ...deviceIdCheck,
-          "$active_device.id$": { [Op.is]: null },
+          "$code.id$": { [Op.is]: null },
         },
       },
     });
 
-    const codes = await ActiveCode.findAll({
-      attributes: [
-        ["id", "value"],
-        ["codename", "label"],
-      ],
+    // const codes = await ActiveCode.findAll({
+    //   attributes: [
+    //     ["id", "value"],
+    //     ["codename", "label"],
+    //   ],
 
-      include: [
-        {
-          model: ActiveDevice,
-          as: "active_device",
-          required: false,
-          attributes: [],
-        },
-      ],
-      where: {
-        [Op.or]: {
-          ...codeIdCheck,
-          "$active_device.id$": { [Op.is]: null },
-        },
-      },
-    });
+    //   include: [
+    //     {
+    //       model: ActiveDevice,
+    //       as: "active_device",
+    //       required: false,
+    //       attributes: [],
+    //     },
+    //   ],
+    //   where: {
+    //     [Op.or]: {
+    //       ...codeIdCheck,
+    //       "$active_device.id$": { [Op.is]: null },
+    //     },
+    //   },
+    // });
 
     return res.send(
       success({
         data: {
           devices,
-          codes,
-          activeDevice,
+          //   codes,
+          code: activeCode,
         },
       })
     );
@@ -193,3 +192,5 @@ exports.availables = async (req, res) => {
     return res.send(internalServerError());
   }
 };
+
+export { availables, create, findAll, findOne, update, destroy, destroyAll };

@@ -12,12 +12,17 @@ const notif = useNotyf()
 
 const isLoading = ref(false)
 
+
+
+
 const device = ref(0)
 const deviceOptions = ref([])
 
-const code = ref(0)
-const codeOptions = ref([])
-const activeDate = ref(new Date())
+const code = ref('')
+// const codeOptions = ref([])
+const startDatetime = ref(new Date())
+const endDatetime = ref(new Date())
+const ownerName =  ref('');
 
 const api: any = useApi()
 onMounted(async () => {
@@ -29,11 +34,16 @@ onMounted(async () => {
     })
     const { response_code, data, message } = (await response.data) || {}
     if (response_code == 200) {
-      codeOptions.value = data.codes
       deviceOptions.value = data.devices
-      device.value = data.activeDevice.deviceId
-      code.value = data.activeDevice.codeId
-      activeDate.value = data.activeDevice.activeDate
+      device.value = data.code.device_id
+      code.value=  data.code.codename;
+      startDatetime.value =  data.code.start_date_time;
+      endDatetime.value =  data.code.end_date_time;
+      ownerName.value = data.code.owner_name
+
+
+    //   code.value = data.activeDevice.codeId
+    //   activeDate.value = data.activeDevice.activeDate
     }
   } catch (error) {
     console.log('error =>', error)
@@ -49,10 +59,12 @@ const isStuck = computed(() => {
 const handleEditDevice = async (data: any) => {
   if (!isLoading.value) {
     try {
-      const response = await api.put(`/api/active-devices/${route.params.id}`, {
-        codeId: code.value,
-        deviceId: device.value,
-        activeDate: activeDate.value,
+      const response = await api.put(`/api/codes/${route.params.id}`, {
+        codename: code.value,
+        device_id : device.value,
+        start_date_time: startDatetime.value,
+        end_date_time: endDatetime.value,
+        owner_name: ownerName.value
       })
 
       const { response_code, data, message } = (await response.data) || {}
@@ -63,7 +75,7 @@ const handleEditDevice = async (data: any) => {
       } else if (response_code == 200) {
         notif.success('Activated Successfully')
 
-        router.push({ name: 'activated-devices' })
+        router.push({ name: 'dashboard' })
       }
     } catch (error) {
       console.log('error =>', error)
@@ -79,13 +91,13 @@ const handleEditDevice = async (data: any) => {
       <div :class="[isStuck && 'is-stuck']" class="form-header stuck-header">
         <div class="form-header-inner">
           <div class="left">
-            <h3>Device Activation</h3>
+            <h3>Code</h3>
           </div>
           <div class="right">
             <div class="buttons">
               <VButton
                 icon="lnir lnir-arrow-left rem-100"
-                :to="{ name: 'activated-devices' }"
+                :to="{ name: 'dashboard' }"
                 light
                 dark-outlined
               >
@@ -97,7 +109,7 @@ const handleEditDevice = async (data: any) => {
                 color="primary"
                 raised
               >
-                Activate Device
+                Update Code
               </VButton>
             </div>
           </div>
@@ -107,7 +119,7 @@ const handleEditDevice = async (data: any) => {
         <!--Fieldset-->
         <div class="form-fieldset">
           <div class="fieldset-heading">
-            <h4>Activation Info</h4>
+            <h4>Info</h4>
             <!-- <p>This helps us to know you</p> -->
           </div>
 
@@ -116,6 +128,7 @@ const handleEditDevice = async (data: any) => {
               <VField class="is-autocomplete-select">
                 <label>Device</label>
 
+                
                 <VControl icon="feather:search">
                   <Multiselect
                     v-model="device"
@@ -129,26 +142,60 @@ const handleEditDevice = async (data: any) => {
               <VField class="is-autocomplete-select">
                 <label>Code</label>
 
+
                 <VControl icon="feather:search">
-                  <Multiselect
+                  <input
                     v-model="code"
-                    :options="codeOptions"
-                    placeholder="Select Code"
-                    :searchable="true"
+                    type="text"
+                    class="input"
+                    placeholder=""
+                    autocomplete="given-name"
                   />
                 </VControl>
               </VField>
 
-              <v-date-picker v-model="activeDate" color="green" trim-weeks>
+              <VField class="is-autocomplete-select">
+                <label>Owner Name</label>
+
+
+                <VControl icon="feather:search">
+                  <input
+                    v-model="ownerName"
+                    type="text"
+                    class="input"
+                    placeholder=""
+                    autocomplete="given-name"
+                  />
+                </VControl>
+              </VField>
+
+              <v-date-picker v-model="startDatetime" color="green" trim-weeks>
                 <template #default="{ inputValue, inputEvents }">
                   <VField>
-                    <label>Activation Date</label>
+                    <label>Start Date</label>
 
                     <VControl>
                       <input
                         class="input"
                         :value="inputValue"
-                        placeholder="Select Date"
+                        placeholder="Select Start Date"
+                        v-on="inputEvents"
+                      />
+                    </VControl>
+                  </VField>
+                </template>
+              </v-date-picker>
+
+              <v-date-picker v-model="endDatetime" color="green" trim-weeks>
+                <template #default="{ inputValue, inputEvents }">
+                  <VField>
+                    <label>End Date</label>
+
+                    <VControl>
+                      <input
+                        class="input"
+                        :value="inputValue"
+                        placeholder="Select Start Date"
                         v-on="inputEvents"
                       />
                     </VControl>

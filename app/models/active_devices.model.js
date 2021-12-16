@@ -1,15 +1,16 @@
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize, Sequelize) => {
   const ActiveDevices = sequelize.define("tkapp_active_devices", {
-    deviceId: {
+    device_id: {
       type: Sequelize.STRING,
     },
-    codeId: {
+    code_id: {
       type: Sequelize.STRING,
     },
-    activeDate: {
+    active_date: {
       type: Sequelize.DATEONLY,
     },
-  });
+  },{ timestamps: true,
+    underscored: true});
 
   return ActiveDevices;
 };

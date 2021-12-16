@@ -1,13 +1,18 @@
-const requestValidator = require("../middlewares/request_validator.middleware.js");
-const signupSchema = require("../schemas/signup.schema.js");
+// const requestValidator = require("../middlewares/request_validator.middleware.js");
+import requestValidator from "../middlewares/request_validator.middleware.js";
+import signupSchema from "../schemas/signup.schema.js";
 
-module.exports = (app) => {
-  const auth = require("../controllers/auth.controller.js");
+import { login, register } from "../controllers/auth.controller.js";
 
-  var router = require("express").Router();
+import { Router } from "express";
 
-  router.post("/login", auth.login);
-  router.post("/signup",requestValidator(signupSchema) ,  auth.register);
+export default (app) => {
+  //   const auth = require("../controllers/auth.controller.js");
+
+  var router = Router();
+
+  router.post("/login", login);
+  router.post("/signup", requestValidator(signupSchema), register);
 
   app.use("/api", router);
 };

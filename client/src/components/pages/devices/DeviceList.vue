@@ -106,25 +106,25 @@ onMounted(async () => {
             <!--Item-->
             <div v-for="item in devices" :key="item.id" class="list-view-item">
               <div class="list-view-item-inner">
-                <img
+                <!-- <img
                   class="avatar"
                   :src="item.deviceImg"
                   alt=""
                   @error.once="
                     (event) => useViaPlaceholderError(event, '150x150')
                   "
-                />
+                /> -->
                 <div class="meta-left">
                   <h3>
                     {{ item.name }}
                   </h3>
-                  <!-- <span>
+                  <span>
                       <i
                         aria-hidden="true"
                         class="iconify"
-                        data-icon="feather:map-pin"
+                        data-icon="iconoir:mac-os-window"
                       ></i>
-                      <span>{{ item.location }}</span>
+                      <span>{{ item.mac_code }}</span>
                       <i
                         aria-hidden="true"
                         class="fas fa-circle icon-separator"
@@ -132,10 +132,10 @@ onMounted(async () => {
                       <i
                         aria-hidden="true"
                         class="iconify"
-                        data-icon="feather:clock"
+                        data-icon="fluent:number-symbol-24-filled"
                       ></i>
-                      <span>{{ item.duration }}</span>
-                      <i
+                      <span>{{ item.serial_code }}</span>
+                      <!-- <i
                         aria-hidden="true"
                         class="fas fa-circle icon-separator"
                       ></i>
@@ -144,8 +144,8 @@ onMounted(async () => {
                         class="iconify"
                         data-icon="feather:check-circle"
                       ></i>
-                      <span>{{ item.requirements }}</span>
-                    </span> -->
+                      <span>{{ item.requirements }}</span> -->
+                    </span>
                 </div>
                 <div class="meta-right">
                   <div class="buttons">

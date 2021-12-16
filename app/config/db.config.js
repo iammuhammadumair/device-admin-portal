@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     HOST: "tkap-db-mysql-nyc3-do-user-3231385-0.b.db.ondigitalocean.com",
     USER: "tkapp_guestside",
     PASSWORD: "Ss71MbMQprGzUXql",

@@ -1,8 +1,8 @@
-module.exports = (app) => {
+import passport from "passport";
+import { Router } from "express";
+export default (app , middleware) => {
+  const router = Router();
   //const userAuth = require("../controllers/user.controller.js");
-
-  const passport = require("passport");
-  var router = require("express").Router();
 
   // Create a new User Device
   router.get(
@@ -13,5 +13,5 @@ module.exports = (app) => {
     }
   );
 
-  app.use("/api/secretinfo", router);
+  app.use("/api/secretinfo",middleware, router);
 };

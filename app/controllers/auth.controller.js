@@ -1,13 +1,13 @@
-const {User} = require("../models");
-const jwt = require("jsonwebtoken");
-const {
+import { User } from "../models";
+import jwt from "jsonwebtoken";
+import {
   unprocessableEntity,
   success,
   internalServerError,
-} = require("../utils/response.util");
-const { encrypt, compare } = require("../utils/bcrypt.util");
+} from "../utils/response.util";
+import { encrypt, compare } from "../utils/bcrypt.util";
 
-exports.register = async (req, res) => {
+const register = async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const emailExist = await User.findOne({
@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         unprocessableEntity({ message: "Email already exist." })
       );
     const hashedPassword = await encrypt(password);
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword,
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
 
 //LOGIN USER
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ where: { email } });
@@ -75,3 +75,7 @@ exports.login = async (req, res) => {
     );
   }
 };
+export {
+    login,
+    register
+}

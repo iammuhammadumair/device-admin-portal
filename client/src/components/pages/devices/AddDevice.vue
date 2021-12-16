@@ -10,8 +10,8 @@ const router = useRouter()
 const notif = useNotyf()
 
 const name = ref('')
-const deviceImg = ref('')
-const platformFile = ref(null)
+const mac_code = ref('')
+const serial_code = ref(null)
 
 const isLoading = ref(false)
 const api: any = useApi()
@@ -28,7 +28,8 @@ const handleAddDevice = async (data: any) => {
     try {
       const response = await api.post('/api/devices', {
         name: name.value,
-        deviceImg: deviceImg.value,
+        mac_code : mac_code.value,
+        serial_code: serial_code.value
       })
 
       const { response_code, data, message } = (await response.data) || {}
@@ -48,39 +49,39 @@ const handleAddDevice = async (data: any) => {
   }
 }
 
-const handleFileUpload = async () => {
-  // debugger;
-  console.log('selected file')
+// const handleFileUpload = async () => {
+//   // debugger;
+//   console.log('selected file')
 
-  //   platformFile.value.files
+//   //   platformFile.value.files
 
-  if (!isLoading.value) {
-    isLoading.value = true
-    try {
-      const formData = new FormData()
-      formData.append('filePath', platformFile.value.files[0])
-      const response = await api.post('/api/file', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+//   if (!isLoading.value) {
+//     isLoading.value = true
+//     try {
+//       const formData = new FormData()
+//       formData.append('filePath', platformFile.value.files[0])
+//       const response = await api.post('/api/file', formData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       })
 
-      const { response_code, data, message } = (await response.data) || {}
+//       const { response_code, data, message } = (await response.data) || {}
 
-      if (response_code == 422) {
-        notif.dismissAll()
-        notif.warning(message)
-      } else if (response_code == 200) {
-        deviceImg.value = data.path
-      }
-    } catch (error) {
-      console.log('error=>', error)
-    }
-    isLoading.value = false
-  }
+//       if (response_code == 422) {
+//         notif.dismissAll()
+//         notif.warning(message)
+//       } else if (response_code == 200) {
+//         deviceImg.value = data.path
+//       }
+//     } catch (error) {
+//       console.log('error=>', error)
+//     }
+//     isLoading.value = false
+//   }
 
-  //Upload to server
-}
+//   //Upload to server
+// }
 </script>
 
 <template>
@@ -125,7 +126,7 @@ const handleFileUpload = async () => {
             <div class="column is-12">
               <VField>
                 <label>Name</label>
-                <VControl icon="feather:user">
+                <VControl icon="heroicons-solid:device-tablet">
                   <input
                     v-model="name"
                     type="text"
@@ -139,18 +140,38 @@ const handleFileUpload = async () => {
           </div>
           <div class="columns is-multiline">
             <div class="column is-12">
-              <!-- <VField>
-                <label>Name</label>
-                <VControl icon="feather:user">
+              <VField>
+                <label>Mac Code</label>
+                <VControl icon="iconoir:mac-os-window">
                   <input
-                    v-model="deviceImg"
+                    v-model="mac_code"
                     type="text"
                     class="input"
                     placeholder=""
                     autocomplete="given-name"
                   />
                 </VControl>
-              </VField> -->
+              </VField>
+            </div>
+          </div>
+          <div class="columns is-multiline">
+            <div class="column is-12">
+              <VField>
+                <label>Serial Code</label>
+                <VControl icon="fluent:number-symbol-24-filled">
+                  <input
+                    v-model="serial_code"
+                    type="text"
+                    class="input"
+                    placeholder=""
+                    autocomplete="given-name"
+                  />
+                </VControl>
+              </VField>
+            </div>
+          </div>
+          <!-- <div class="columns is-multiline">
+            <div class="column is-12">
               <VField grouped>
                 <VControl>
                   <div class="file is-boxed">
@@ -175,7 +196,7 @@ const handleFileUpload = async () => {
 
               <img v-if="deviceImg" :src="deviceImg" alt="" />
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

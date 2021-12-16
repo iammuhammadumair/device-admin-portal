@@ -1,4 +1,4 @@
-const yup = require('yup');
+import  yup from 'yup';
 
 // Just like before, without the id field
 const signupSchema = yup.object({
@@ -8,4 +8,4 @@ const signupSchema = yup.object({
   confirm_password: yup.string().required().oneOf([yup.ref('password'), null], 'Password not matched'),
 });
 
-module.exports=signupSchema;
+export default signupSchema;

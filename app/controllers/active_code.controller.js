@@ -1,27 +1,38 @@
-const { response } = require("express");
-const { ActiveCode, Sequelize } = require("../models");
-const {
+// const { response } = require("express");
+// import { Op } from "sequelize/dist";
+import { ActiveCode, Sequelize } from "../models";
+// import {Sequelize :{Op}} from "sequelize";
+const { Op } = Sequelize;
+import {
   internalServerError,
   success,
   unprocessableEntity,
-} = require("../utils/response.util");
-const Op = Sequelize.Op;
+} from "../utils/response.util";
 
-exports.create = async (req, res) => {
-  const { codename } = req.body;
+const create = async (req, res) => {
+  const { codename, owner_name, start_date_time, end_date_time, device_id } =
+    req.body;
   try {
     // Validate request
-    if (!codename) {
+    if (
+      !codename ||
+      !owner_name ||
+      !start_date_time ||
+      !end_date_time ||
+      !device_id
+    ) {
       return res.send(
         unprocessableEntity({ message: "Content can not be empty!" })
       );
     }
     // Create a ActiveCode
     const activeCode = {
-      stdate: new Date(),
-      endate: new Date(),
-      codename: codename,
-      // device_Id: "",
+      owner_name,
+      codename,
+      start_date_time,
+      end_date_time,
+      user_id: req.user.id,
+      device_id,
     };
 
     await ActiveCode.create(activeCode);
@@ -35,7 +46,7 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve all ActiveCode from the database.
-exports.findAll = async (req, res) => {
+const findAll = async (req, res) => {
   try {
     const { name } = req.query;
     const condition = name ? { codename: { [Op.like]: `%${name}%` } } : null;
@@ -48,7 +59,7 @@ exports.findAll = async (req, res) => {
   }
 };
 // Find a single ActiveCode with an id
-exports.findOne = async (req, res) => {
+const findOne = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -61,11 +72,34 @@ exports.findOne = async (req, res) => {
 };
 
 // Update a UserDevice by the id in the request
-exports.update = async (req, res) => {
+const update = async (req, res) => {
+  const { codename, owner_name, start_date_time, end_date_time, device_id } =
+    req.body;
   try {
+    // Validate request
+    if (
+      !codename ||
+      !owner_name ||
+      !start_date_time ||
+      !end_date_time ||
+      !device_id
+    ) {
+      return res.send(
+        unprocessableEntity({ message: "Content can not be empty!" })
+      );
+    }
     const id = req.params.id;
+    // Create a ActiveCode
+    const activeCode = {
+      owner_name,
+      codename,
+      start_date_time,
+      end_date_time,
+      // user_id: req.user.id ,
+      device_id,
+    };
 
-    await ActiveCode.update({codename  : req.body.codename}, {
+    await ActiveCode.update(activeCode, {
       where: { id: id },
     });
 
@@ -76,7 +110,7 @@ exports.update = async (req, res) => {
   }
 };
 // Delete a ActiveCode with the specified id in the request
-exports.delete = (req, res) => {
+const destroy = (req, res) => {
   const id = req.params.id;
 
   ActiveCode.destroy({
@@ -100,7 +134,7 @@ exports.delete = (req, res) => {
     });
 };
 // Delete all ActiveCode from the database.
-exports.deleteAll = (req, res) => {
+const destroyAll = (req, res) => {
   ActiveCode.destroy({
     where: {},
     truncate: false,
@@ -117,3 +151,4 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
+export { create, findAll, findOne, update, destroy, destroyAll };

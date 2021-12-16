@@ -34,10 +34,10 @@ onMounted(async () => {
   if (!isLoading.value) {
     isLoading.value = true
     try {
-      const response = await api.get('/api/active-devices', {
-        params: {
-          activation: 1,
-        },
+      const response = await api.get('/api/codes', {
+        // params: {
+        //   activation: 1,
+        // },
       })
 
       const { response_code, data, message } = (await response.data) || {}
@@ -67,16 +67,16 @@ onMounted(async () => {
           <i aria-hidden="true" class="iconify" data-icon="feather:search"></i>
         </div>
       </VControl> -->
-      <!-- <div class="ml-auto">
+      <div class="ml-auto">
         <VButton
           color="primary"
           outlined
           raised
-          :to="{ name: 'activated-devices-create' }"
+          :to="{ name: 'codes-create' }"
         >
-          Activate Device
+           Add Code
         </VButton>
-      </div> -->
+      </div>
     </div>
 
     <div class="page-content-inner">
@@ -110,17 +110,17 @@ onMounted(async () => {
             <!--Item-->
             <div v-for="item in devices" :key="item.id" class="list-view-item">
               <div class="list-view-item-inner">
-                <img
+                <!-- <img
                   class="avatar"
                   :src="item.device.deviceImg"
                   alt=""
                   @error.once="
                     (event) => useViaPlaceholderError(event, '150x150')
                   "
-                />
+                /> -->
                 <div class="meta-left">
                   <h3>
-                    {{ item.device.name }}
+                    {{ item.codename }}
                   </h3>
                   <span>
                     <!-- <i
@@ -138,7 +138,10 @@ onMounted(async () => {
                       class="iconify"
                       data-icon="feather:clock"
                     ></i>
-                    <span>{{ item.activeDate }}</span>
+                    <span>{{ (new Date(item.start_date_time)).toLocaleString() }}</span>
+                    -
+                    <!-- <span>{{ item.end_date_time }}</span> -->
+                    <span>{{ (new Date(item.end_date_time)).toLocaleString() }}</span>
                     <i
                       aria-hidden="true"
                       class="fas fa-circle icon-separator"
@@ -148,14 +151,14 @@ onMounted(async () => {
                       class="iconify"
                       data-icon="feather:check-circle"
                     ></i>
-                    <span>{{ item.code.codename }}</span>
+                    <span>{{ item.owner_name }}</span>
                   </span>
                 </div>
                 <div class="meta-right">
                   <div class="buttons">
                     <VIconButton
                       :to="{
-                        name: 'activated-devices-edit-id',
+                        name: 'codes-edit-id',
                         params: { id: item.id },
                       }"
                       icon="feather:edit"

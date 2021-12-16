@@ -1,18 +1,20 @@
-const {
+
+import {
   ActiveDevice,
-  Sequelize: { Op },
+  Sequelize,
   Device,
   ActiveCode,
-} = require("../models");
+} from "../models";
 
-const {
+import {
   internalServerError,
   success,
   unprocessableEntity,
-} = require("../utils/response.util");
+} from "../utils/response.util";
 
+const {Op} = Sequelize;
 // Create and Save a new UserDevice
-exports.create = async (req, res) => {
+const create = async (req, res) => {
   const { deviceId, codeId, activeDate } = req.body;
   try {
     if (!deviceId || !codeId || !activeDate) {
@@ -36,7 +38,7 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve all ActiveDevice from the database.
-exports.findAll = async (req, res) => {
+const findAll = async (req, res) => {
   try {
     const { deviceId, activation } = req.query;
     let condition = deviceId
@@ -74,7 +76,7 @@ exports.findAll = async (req, res) => {
   }
 };
 // Find a single ActiveDevice with an id
-exports.findOne = (req, res) => {
+const findOne = (req, res) => {
   const id = req.params.id;
 
   ActiveDevice.findByPk(id)
@@ -95,7 +97,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a UserDevice by the id in the request
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   const id = req.params.id;
   const { deviceId, codeId, activeDate } = req.body;
   try {
@@ -114,7 +116,7 @@ exports.update = async (req, res) => {
   }
 };
 // Delete a ActiveDevice with the specified id in the request
-exports.delete = (req, res) => {
+const destroy = (req, res) => {
   const id = req.params.id;
 
   ActiveDevice.destroy({
@@ -138,7 +140,7 @@ exports.delete = (req, res) => {
     });
 };
 // Delete all ActiveDevice from the database.
-exports.deleteAll = (req, res) => {
+const destroyAll = (req, res) => {
   ActiveDevice.destroy({
     where: {},
     truncate: false,
@@ -156,3 +158,12 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
+
+export {
+    create,
+    findAll,
+    findOne,
+    update,
+    destroy,
+    destroyAll
+}

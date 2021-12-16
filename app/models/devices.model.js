@@ -1,19 +1,32 @@
-const db  =  require('./index');
-
-
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize, Sequelize) => {
   const Devices = sequelize.define("tkapp_devices", {
+    user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "tkapp_users",
+          key: "id"
+        }
+    },
     name: {
       type: Sequelize.STRING,
     },
-    deviceImg: {
+    mac_code: {
       type: Sequelize.STRING,
     },
-  });
-  
+    serial_code: {
+      type: Sequelize.STRING,
+    },
+    // created_at: {
+    //   type: Sequelize.DATE,
+    //   default: new Date(),
+    // },
+    // updated_at: {
+    //   type: Sequelize.DATE,
+    //   default: new Date(),
+    // },
+  } ,{ timestamps: true,
+    underscored: true});
+
   return Devices;
 };
 // db.devices.belongsTo(db.active_devices);
-
-
-

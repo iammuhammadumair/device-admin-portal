@@ -1,4 +1,4 @@
-var bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 
 const encrypt = async  function(password) {
     try {
@@ -21,7 +21,7 @@ const compare = async function(plainPass, hashword) {
     }
 };
 
-module.exports ={
+export {
     encrypt,
     compare
 }

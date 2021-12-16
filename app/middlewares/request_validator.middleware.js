@@ -1,4 +1,5 @@
-const {unprocessableEntity} =  require('../utils/response.util');
+
+import {unprocessableEntity} from  '../utils/response.util';
 /**
  * Validate that a resource being POSTed or PUT
  * has a valid shape, else return 400 Bad Request
@@ -16,4 +17,12 @@ const requestValidator = (resourceSchema) => async (req, res, next) => {
   }
 };
 
-module.exports = requestValidator;
+export default requestValidator;
+
+
+
+
+
+
+
+

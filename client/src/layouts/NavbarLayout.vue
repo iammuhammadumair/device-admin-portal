@@ -142,7 +142,7 @@ watch(
             ></i>
             <span>Devices</span>
           </RouterLink>
-          <RouterLink
+          <!-- <RouterLink
             :to="{ name: 'access-codes' }"
             :class="[route.path.startsWith('/access-codes') && 'is-active']"
             class="centered-link centered-link-toggle"
@@ -167,7 +167,7 @@ watch(
               data-icon="feather:activity"
             ></i>
             <span>Activated Devices</span>
-          </RouterLink>
+          </RouterLink> -->
           <!-- </a> -->
         </div>
       </template>
