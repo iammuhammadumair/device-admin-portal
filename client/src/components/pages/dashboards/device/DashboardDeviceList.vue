@@ -110,14 +110,14 @@ onMounted(async () => {
             <!--Item-->
             <div v-for="item in devices" :key="item.id" class="list-view-item">
               <div class="list-view-item-inner">
-                <!-- <img
+                <img
                   class="avatar"
-                  :src="item.device.deviceImg"
+                  :src="`http://${item.ota}.jpg`"
                   alt=""
                   @error.once="
                     (event) => useViaPlaceholderError(event, '150x150')
                   "
-                /> -->
+                />
                 <div class="meta-left">
                   <h3>
                     {{ item.codename }}

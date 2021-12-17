@@ -23,24 +23,24 @@ const api: any = useApi()
 
 // })
 
-const handlePlatformSelecton = async (event: any) => {
-    platform.value = event;
-    if (event) {
-        console.log('event =>' , event)
-        try {
-            const response = await api.get(`/api/settings/${event}`)
-            const { response_code, data, message } = (await response.data) || {}
-            if (response_code == 200) {
-                // platform.value = data.platform_id;
-                username.value = data.username;
-                password.value = data.password;
+// const handlePlatformSelecton = async (event: any) => {
+//     platform.value = event;
+//     if (event) {
+//         console.log('event =>' , event)
+//         try {
+//             const response = await api.get(`/api/settings/${event}`)
+//             const { response_code, data, message } = (await response.data) || {}
+//             if (response_code == 200) {
+//                 // platform.value = data.platform_id;
+//                 username.value = data.username;
+//                 password.value = data.password;
 
-            }
-        } catch (error) {
-            console.log('error =>', error)
-        }
-    }
-}
+//             }
+//         } catch (error) {
+//             console.log('error =>', error)
+//         }
+//     }
+// }
 
 const { y } = useWindowScroll()
 
@@ -151,7 +151,6 @@ const verifyRequest = async () => {
                                         v-model="platform"
                                         :options="platformOptions"
                                         placeholder="Select Platform"
-                                        @change="handlePlatformSelecton"
                                     />
                                 </VControl>
                             </VField>

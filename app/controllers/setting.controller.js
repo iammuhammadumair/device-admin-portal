@@ -1,7 +1,12 @@
 // import { request } from "express";
-import { Setting , ActiveDevice, Device, ActiveCode, Sequelize } from "../models";
-
-
+import {
+  Setting,
+  ActiveDevice,
+  Device,
+  ActiveCode,
+  Sequelize,
+  User,
+} from "../models";
 
 import {
   internalServerError,
@@ -19,10 +24,15 @@ const create = async (req, res) => {
       );
     }
 
-    await Setting.create({ platform_id, username, password, user_id: req.user.id });
+    await User.update(
+      { platform_id: platform_id },
+      {
+        where: { id: req.user.id },
+      }
+    );
+    // await Setting.create({ platform_id, username, password, user_id: req.user.id });
 
-
-    return res.send(success({ data: "Setting added Successfully" }));
+    return res.send(success({ data: "Platform updated Successfully" }));
   } catch (error) {
     console.log("error =>", error);
     return res.send(internalServerError());
@@ -51,9 +61,14 @@ const findOne = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const setting = await Setting.findByPk(id);
+    const setting = await Setting.findOne({
+      where: {
+        id: id,
+        user_id: req.user.id,
+      },
+    });
 
-    return res.send(success({ data: setting ||{} }));
+    return res.send(success({ data: setting || {} }));
   } catch (error) {
     return res.send(internalServerError());
   }
@@ -125,11 +140,8 @@ const destroyAll = (req, res) => {
     });
 };
 
+const verifyStatus = (req, res) => {
+  return res.json(success());
+};
 
-const verifyStatus = (req , res) => {
-    return res.json(success())
-}
-
-
-
-export { create, findAll, findOne, update, destroy, destroyAll  , verifyStatus};
+export { create, findAll, findOne, update, destroy, destroyAll, verifyStatus };
