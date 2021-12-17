@@ -123,11 +123,11 @@ watch(
             :class="[route.path.startsWith('/dashboard') && 'is-active']"
             class="centered-link centered-link-toggle"
           >
-            <i
+            <!-- <i
               aria-hidden="true"
               class="iconify"
               data-icon="feather:activity"
-            ></i>
+            ></i> -->
             <span>Dashboard</span>
           </RouterLink>
           <RouterLink
@@ -135,12 +135,24 @@ watch(
             :class="[route.path.startsWith('/devices') && 'is-active']"
             class="centered-link centered-link-toggle"
           >
-            <i
+            <!-- <i
               aria-hidden="true"
               class="iconify"
               data-icon="feather:activity"
-            ></i>
+            ></i> -->
             <span>Devices</span>
+          </RouterLink>
+          <RouterLink
+            :to="{ name: 'settings-create' }"
+            :class="[route.path.startsWith('/settings') && 'is-active']"
+            class="centered-link centered-link-toggle"
+          >
+            <!-- <i
+              aria-hidden="true"
+              class="iconify"
+              data-icon="feather:activity"
+            ></i> -->
+            <span>Settings</span>
           </RouterLink>
           <!-- <RouterLink
             :to="{ name: 'access-codes' }"

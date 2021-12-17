@@ -154,7 +154,7 @@ const handleAddDevice = async (data: any) => {
                 </VControl>
               </VField>
 
-              <v-date-picker v-model="startDatetime" color="green" trim-weeks>
+              <v-date-picker v-model="startDatetime" mode="dateTime" color="green" trim-weeks>
                 <template #default="{ inputValue, inputEvents }">
                   <VField>
                     <label>Start Date</label>
@@ -171,7 +171,7 @@ const handleAddDevice = async (data: any) => {
                 </template>
               </v-date-picker>
 
-              <v-date-picker v-model="endDatetime" color="green" trim-weeks>
+              <v-date-picker v-model="endDatetime" color="green" mode="dateTime" trim-weeks>
                 <template #default="{ inputValue, inputEvents }">
                   <VField>
                     <label>End Date</label>

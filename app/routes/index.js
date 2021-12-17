@@ -4,8 +4,9 @@ import activeDeviceRoutes from "./active_device.routes";
 import secretInfoRoutes from "./secretinfo";
 import deviceRoutes from "./device.routes";
 import fileUploadRoutes from "./file_upload.routes";
+import settingRoutes from "./setting.routes";
 
-import passport from "../../app/auth/passport.js";
+// import passport from "../../app/auth/passport.js";
 import authenticate from "../middlewares/authentication.middleware";
 const authValidation = (req, res, next) => authenticate(req, res, next);
 export default (app) => {
@@ -15,4 +16,6 @@ export default (app) => {
   activeDeviceRoutes(app, authValidation);
   secretInfoRoutes(app, authValidation);
   fileUploadRoutes(app, authValidation);
+  settingRoutes(app,  authValidation)
+
 };

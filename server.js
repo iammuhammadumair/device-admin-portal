@@ -6,6 +6,11 @@ import passport from "./app/auth/passport.js";
 import routes from "./app/routes/index.js";
 
 import * as db from "./app/models/index";
+
+
+// db.sequelize.sync({ force: true }).then(() => {
+//     console.log("Drop and re-sync db.");
+//   });
 const app = express();
 
 app.use(express.static("uploads"));
@@ -27,9 +32,6 @@ app.use(passport.initialize());
 
 routes(app);
 
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
 
 // simple route
 app.get("/", (req, res) => {
