@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {findOne , findAll , create , update , destroy , destroyAll , availables} from "../controllers/setting.controller.js";
+import {findOne , findAll , create , update , destroy , destroyAll , verifyStatus} from "../controllers/setting.controller.js";
 export default (app  , middleware) => {
 
   var router = Router();
@@ -11,9 +11,12 @@ export default (app  , middleware) => {
 //   router.get("/", findAll);
 
 
+router.post("/verify-request", verifyStatus);
 
   // Retrieve a single  devices with id
   router.get("/:id", findOne);
+
+
 
   // Update a devices with id
 //   router.put("/:id", update);

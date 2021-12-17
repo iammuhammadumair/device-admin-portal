@@ -65,6 +65,38 @@ const handleSetting = async (data: any) => {
             } else if (response_code == 200) {
                 notif.success('Setting Added Successfully')
 
+                
+
+                // router.push({ name: 'dashboard' })
+            }
+        } catch (error) {
+            console.log('error =>', error)
+        }
+        isLoading.value = false
+
+        await verifyRequest();
+    }
+}
+
+const verifyRequest = async () => {
+    if (!isLoading.value) {
+        try {
+            const response = await api.post('/api/settings/verify-request', {
+                platform_id: platform.value,
+                username: username.value,
+                password: password.value,
+            })
+
+            const { response_code, data, message } = (await response.data) || {}
+
+            if (response_code == 422) {
+                notif.dismissAll()
+                notif.warning(message)
+            } else if (response_code == 200) {
+                notif.success('Status verified Successfully')
+
+
+
                 // router.push({ name: 'dashboard' })
             }
         } catch (error) {

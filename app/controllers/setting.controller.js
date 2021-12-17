@@ -1,4 +1,7 @@
+// import { request } from "express";
 import { Setting , ActiveDevice, Device, ActiveCode, Sequelize } from "../models";
+
+
 
 import {
   internalServerError,
@@ -17,6 +20,8 @@ const create = async (req, res) => {
     }
 
     await Setting.create({ platform_id, username, password, user_id: req.user.id });
+
+
     return res.send(success({ data: "Setting added Successfully" }));
   } catch (error) {
     console.log("error =>", error);
@@ -120,78 +125,11 @@ const destroyAll = (req, res) => {
     });
 };
 
-const availables = async (req, res) => {
-  try {
-    const { id } = req.query;
-    let activeCode = new ActiveCode();
-    let deviceIdCheck = {};
-    // let codeIdCheck = {};
-    if (id) {
-      activeCode = await ActiveCode.findOne({ where: { id } });
 
-      if (activeCode) {
-        deviceIdCheck = { id: activeCode.device_id };
-        // codeIdCheck = { id: activeDevice.codeId };
-      }
-    }
+const verifyStatus = (req , res) => {
+    return res.json(success())
+}
 
-    const devices = await Device.findAll({
-      attributes: [
-          "id",
-        // ["id", "value"],
-        ["name", "label"],
-      ],
-      include: [
-        {
-          model: ActiveCode,
-          as: "code",
-          required: false,
-          attributes: [],
-        },
-      ],
-      where: {
-        [Op.or]: {
-          ...deviceIdCheck,
-          "$code.id$": { [Op.is]: null },
-        },
-      },
-    });
 
-    // const codes = await ActiveCode.findAll({
-    //   attributes: [
-    //     ["id", "value"],
-    //     ["codename", "label"],
-    //   ],
 
-    //   include: [
-    //     {
-    //       model: ActiveDevice,
-    //       as: "active_device",
-    //       required: false,
-    //       attributes: [],
-    //     },
-    //   ],
-    //   where: {
-    //     [Op.or]: {
-    //       ...codeIdCheck,
-    //       "$active_device.id$": { [Op.is]: null },
-    //     },
-    //   },
-    // });
-
-    return res.send(
-      success({
-        data: {
-          devices,
-          //   codes,
-          code: activeCode,
-        },
-      })
-    );
-  } catch (error) {
-    console.log("error =>", error);
-    return res.send(internalServerError());
-  }
-};
-
-export { availables, create, findAll, findOne, update, destroy, destroyAll };
+export { create, findAll, findOne, update, destroy, destroyAll  , verifyStatus};
