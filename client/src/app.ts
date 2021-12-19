@@ -7,11 +7,13 @@ import {
   App,
   onMounted,
 } from 'vue'
-import { RouterView } from 'vue-router'
+import { RouterView  } from 'vue-router'
+import { useRoute } from 'vue-router'
+
 import { createHead } from '@vueuse/head'
 import { createPinia } from 'pinia'
 import { createI18n } from './i18n'
-import { createRouter } from './router'
+import { createRouter  } from './router'
 
 import { useUserSession } from '/@src/stores/userSession'
 import { provideApi, useApi } from '/@src/composable/useApi'
@@ -54,18 +56,27 @@ export async function createApp({ enhanceApp }: VueroAppOptions) {
 
         //   const api = useApi()
         if (userSession.isLoggedIn) {
-          try {
+            //do something
+        //   try {
 
-            // do api request call to retreive its profile
-            const user = await api.get('/users/me')
-            userSession.setUser(user)
+        //     // do api request call to retreive its profile
+        //     const user = await api.get('/users/me')
+        //     userSession.setUser(user)
             
-          } catch (err) {}
+        //   } catch (err) {}
         } else {
           // delete stored token if it fails
           userSession.logoutUser()
           // redirect the user somewhere
-          router.replace('/login')
+        //   route.
+        const route = useRoute();
+        
+         const isGuestRoute =  ['/login' , '/signup' , '/forgot-password' , '/reset-password'].includes(route.path);
+         console.log('isGuestRoute' , isGuestRoute);
+         
+         if(!isGuestRoute){
+             router.replace('/login')
+         }
         }
       })
 

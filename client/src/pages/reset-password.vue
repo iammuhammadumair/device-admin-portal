@@ -1,31 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, inject, defineComponent } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useHead } from '@vueuse/head'
-import useNotyf from '/@src/composable/useNotyf'
 
 import { isDark, toggleDarkModeHandler } from '/@src/state/darkModeState'
+import { useUserSession } from '/@src/stores/userSession'
+import useNotyf from '/@src/composable/useNotyf'
 import sleep from '/@src/utils/sleep'
 import { useApi } from '../composable/useApi'
 
-const router = useRouter()
-const notif = useNotyf()
 const isLoading = ref(false)
+const router = useRouter()
+const route = useRoute()
+const notif = useNotyf()
+const userSession = useUserSession()
+const redirect = route.query.redirect as string
+
 const api: any = useApi()
-const email = ref('')
-const password = ref('')
+
 const confirm_password = ref('')
-const name = ref('')
-const handleSignup = async () => {
+const password = ref('')
+
+const handleResetPassword = async () => {
   if (!isLoading.value) {
     isLoading.value = true
-
     try {
-      const response = await api.post('/api/signup', {
-        name: name.value,
-        email: email.value,
+      const response = await api.post(`/api/reset-password?token=${route.query.token}`, {
         password: password.value,
-        confirm_password: confirm_password.value,
+        confirm_password : confirm_password.value
       })
 
       const { response_code, data, message } = (await response.data) || {}
@@ -34,18 +36,20 @@ const handleSignup = async () => {
         notif.dismissAll()
         notif.warning(message)
       } else if (response_code == 200) {
-        notif.success('Signup Successfully')
+        notif.success('Password updated successfully;')
+        userSession.logoutUser()
+
         router.push({ name: 'login' })
       }
     } catch (error) {
-      console.log('error =>', error)
+      console.log('error =>' ,  error)
     }
     isLoading.value = false
   }
 }
 
 useHead({
-  title: 'Signup',
+  title: 'Login',
 })
 </script>
 
@@ -76,80 +80,50 @@ useHead({
       <div class="inner-wrap">
         <!--Form Title-->
         <div class="auth-head">
-          <h2>Join Us Now.</h2>
-          <p>Start by creating your account</p>
-          <RouterLink :to="{ name: 'login' }">
-            I already have an account
-          </RouterLink>
+          <h2>Reset Account Password</h2>
+          <p>Reset your account password.</p>
         </div>
 
         <!--Form-->
         <div class="form-card">
-          <form @submit.prevent="handleSignup">
+          <form @submit.prevent="handleResetPassword">
             <div class="login-form">
-              <!-- Input -->
-              <VField>
-                <VControl icon="feather:user">
-                  <input
-                    v-model="name"
-                    class="input"
-                    type="text"
-                    placeholder="Name"
-                    autocomplete="name"
-                  />
-                </VControl>
-              </VField>
-              <!-- Input -->
-              <VField>
-                <VControl icon="feather:mail">
-                  <input
-                    v-model="email"
-                    class="input"
-                    type="text"
-                    placeholder="Email Address"
-                    autocomplete="email"
-                  />
-                </VControl>
-              </VField>
-              <!-- Input -->
               <VField>
                 <VControl icon="feather:lock">
                   <input
                     v-model="password"
                     class="input"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Password"
+                    type="text"
+                    placeholder="New Password"
+                    autocomplete="password"
                   />
                 </VControl>
               </VField>
-              <!-- Input -->
               <VField>
                 <VControl icon="feather:lock">
                   <input
                     v-model="confirm_password"
                     class="input"
-                    type="password"
-                    placeholder="Repeat Password"
+                    type="text"
+                    placeholder="Confirm Password"
+                    autocomplete="password"
                   />
                 </VControl>
               </VField>
 
               <!-- Submit -->
-              <VField>
-                <VControl class="login">
-                  <VButton
-                    :loading="isLoading"
-                    type="submit"
-                    color="primary"
-                    bold
-                    fullwidth
-                    raised
-                  >
-                    Sign Up
-                  </VButton>
-                </VControl>
-              </VField>
+              <VControl class="login">
+                <VButton
+                  :loading="isLoading"
+                  type="submit"
+                  color="primary"
+                  bold
+                  fullwidth
+                  raised
+                >
+                    Update Password
+                </VButton>
+              </VControl>
             </div>
           </form>
         </div>
@@ -161,4 +135,3 @@ useHead({
 @import '../scss/abstracts/_mixins.scss';
 @import '../scss/pages/auth/_auth.scss';
 </style>
-

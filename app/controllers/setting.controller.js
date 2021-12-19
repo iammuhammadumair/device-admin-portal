@@ -1,12 +1,6 @@
 // import { request } from "express";
-import {
-  Setting,
-  ActiveDevice,
-  Device,
-  ActiveCode,
-  Sequelize,
-  User,
-} from "../models";
+import { User } from "../models";
+import { encrypt } from "../utils/bcrypt.util";
 
 import {
   internalServerError,
@@ -14,7 +8,6 @@ import {
   unprocessableEntity,
 } from "../utils/response.util";
 
-const { Op } = Sequelize;
 const create = async (req, res) => {
   const { platform_id, username, password } = req.body;
   try {
@@ -39,109 +32,23 @@ const create = async (req, res) => {
   }
 };
 
-// Retrieve all ActiveCode from the database.
-const findAll = async (req, res) => {
+const password = async (req, res) => {
   try {
-    const name = req.query.name;
-    let condition = name ? { name: { [Op.like]: `%${name}%` } } : {};
-
-    const devices = await Device.findAll({
-      where: condition,
-      order: [["created_at", "DESC"]],
-    });
-    return res.send(success({ data: devices }));
-  } catch (error) {
-    console.log("error =>", error);
-    return res.send(internalServerError());
-  }
-};
-
-// Find a single ActiveCode with an id
-const findOne = async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const setting = await Setting.findOne({
-      where: {
-        id: id,
-        user_id: req.user.id,
-      },
-    });
-
-    return res.send(success({ data: setting || {} }));
-  } catch (error) {
-    return res.send(internalServerError());
-  }
-};
-
-// Update a Device by the id in the request
-const update = async (req, res) => {
-  const { name, mac_code, serial_code } = req.body;
-  const id = req.params.id;
-  try {
-    if (!name || !mac_code || !serial_code) {
-      return res.send(
-        unprocessableEntity({ message: "Content can not be empty!" })
-      );
-    }
-
-    await Device.update(
-      { name, mac_code, serial_code },
-      {
-        where: { id: id },
-      }
+    const { password } = req.body;
+    const hashedPassword = await encrypt(password);
+    await User.update(
+      { password: hashedPassword },
+      { where: { id: req.user.id } }
     );
-    return res.send(success());
+    return res.send(success({ message: "Password Updated Successfully" }));
   } catch (error) {
     console.log("error =>", error);
     return res.send(internalServerError());
   }
-};
-// Delete a Device with the specified id in the request
-const destroy = (req, res) => {
-  const id = req.params.id;
-
-  Device.destroy({
-    where: { id: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Device was deleted successfully!",
-        });
-      } else {
-        res.send({
-          message: `Cannot delete Device . Maybe Device was not found!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Could not delete Device",
-      });
-    });
-};
-// Delete all Device from the database.
-const destroyAll = (req, res) => {
-  Device.destroy({
-    where: {},
-    truncate: false,
-  })
-    .then((nums) => {
-      res.send({
-        message: `${nums} ActiveCode were deleted successfully!`,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all Device.",
-      });
-    });
 };
 
 const verifyStatus = (req, res) => {
   return res.json(success());
 };
 
-export { create, findAll, findOne, update, destroy, destroyAll, verifyStatus };
+export { create, verifyStatus, password };

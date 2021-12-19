@@ -17,6 +17,10 @@ export default (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    reset_token: {
+        type : Sequelize.TEXT,
+        allowNull: true
+    }
     
   },{ timestamps: true,
     underscored: true});

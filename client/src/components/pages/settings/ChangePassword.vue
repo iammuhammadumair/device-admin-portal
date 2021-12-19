@@ -11,11 +11,9 @@ const notif = useNotyf()
 
 const isLoading = ref(false)
 
-const platform = ref(0)
-const platformOptions = ref([{ value: 1, label: "Platform 1" }, { value: 2, label: "Platform 2" }, { value: 3, label: "Platform 3" }])
 
-const username = ref('')
 const password = ref('')
+const confirmPassword = ref('')
 
 const api: any = useApi()
 
@@ -25,13 +23,12 @@ const isStuck = computed(() => {
     return y.value > 30
 })
 
-const handleSetting = async (data: any) => {
+const handleChangePassword = async (data: any) => {
     if (!isLoading.value) {
         try {
-            const response = await api.post('/api/settings', {
-                platform_id: platform.value,
-                username: username.value,
+            const response = await api.post('/api/settings/password', {
                 password: password.value,
+                confirm_password: confirmPassword.value,
             })
 
             const { response_code, data, message } = (await response.data) || {}
@@ -40,49 +37,27 @@ const handleSetting = async (data: any) => {
                 notif.dismissAll()
                 notif.warning(message)
             } else if (response_code == 200) {
-                notif.success('Setting Added Successfully')
+                password.value = "";
+                confirmPassword.value="";
+                notif.success('Password updated Successfully')
             }
         } catch (error) {
             console.log('error =>', error)
         }
         isLoading.value = false
 
-        await verifyRequest();
     }
 }
 
-const verifyRequest = async () => {
-    if (!isLoading.value) {
-        try {
-            const response = await api.post('/api/settings/verify-request', {
-                platform_id: platform.value,
-                username: username.value,
-                password: password.value,
-            })
-
-            const { response_code, data, message } = (await response.data) || {}
-
-            if (response_code == 422) {
-                notif.dismissAll()
-                notif.warning(message)
-            } else if (response_code == 200) {
-                notif.success('Status verified Successfully')
-            }
-        } catch (error) {
-            console.log('error =>', error)
-        }
-        isLoading.value = false
-    }
-}
 </script>
 
 <template>
-    <form class="form-layout" @submit.prevent="handleSetting">
+    <form class="form-layout" @submit.prevent="handleChangePassword">
         <div class="form-outer">
             <div :class="[isStuck && 'is-stuck']" class="form-header stuck-header">
                 <div class="form-header-inner">
                     <div class="left">
-                        <h3>Setting</h3>
+                        <h3>Change Password</h3>
                     </div>
                     <div class="right">
                         <div class="buttons">
@@ -97,7 +72,7 @@ const verifyRequest = async () => {
                                 type="submit"
                                 color="primary"
                                 raised
-                            >Setting</VButton>
+                            >Update</VButton>
                         </div>
                     </div>
                 </div>
@@ -112,37 +87,26 @@ const verifyRequest = async () => {
 
                     <div class="columns is-multiline">
                         <div class="column is-12">
-                            <VField class="is-autocomplete-select">
-                                <label>Platform</label>
-
-                                <VControl icon="feather:search">
-                                    <Multiselect
-                                        v-model="platform"
-                                        :options="platformOptions"
-                                        placeholder="Select Platform"
-                                    />
-                                </VControl>
-                            </VField>
-
-                            <VField class="is-autocomplete-select">
-                                <label>Username</label>
-
-                                <VControl icon="feather:user">
-                                    <input
-                                        v-model="username"
-                                        type="text"
-                                        class="input"
-                                        autocomplete="given-name"
-                                    />
-                                </VControl>
-                            </VField>
-
+                            
                             <VField class="is-autocomplete-select">
                                 <label>Password</label>
 
                                 <VControl icon="feather:unlock">
                                     <input
                                         v-model="password"
+                                        type="text"
+                                        class="input"
+                                        autocomplete="given-name"
+                                    />
+                                </VControl>
+                            </VField>
+                            
+                            <VField class="is-autocomplete-select">
+                                <label>Confirm Password</label>
+
+                                <VControl icon="feather:unlock">
+                                    <input
+                                        v-model="confirmPassword"
                                         type="text"
                                         class="input"
                                         autocomplete="given-name"

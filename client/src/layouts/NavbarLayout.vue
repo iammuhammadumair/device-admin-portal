@@ -143,7 +143,7 @@ watch(
             <span>Devices</span>
           </RouterLink>
           <RouterLink
-            :to="{ name: 'settings-create' }"
+            :to="{ name: 'settings' }"
             :class="[route.path.startsWith('/settings') && 'is-active']"
             class="centered-link centered-link-toggle"
           >

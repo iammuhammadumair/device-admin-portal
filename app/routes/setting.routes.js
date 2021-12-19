@@ -1,31 +1,23 @@
-import {Router} from "express";
-import {findOne , findAll , create , update , destroy , destroyAll , verifyStatus} from "../controllers/setting.controller.js";
-export default (app  , middleware) => {
-
+import { Router } from "express";
+import {
+  create,
+  verifyStatus,
+  password,
+} from "../controllers/setting.controller.js";
+import requestValidator from "../middlewares/request_validator.middleware.js";
+import changePasswordSchema from "../schemas/change_password.schema.js";
+export default (app, middleware) => {
   var router = Router();
 
   // Create a new devices
   router.post("/", create);
+  router.post("/verify-request", verifyStatus);
+  router.post("/password",
+  [middleware, requestValidator(changePasswordSchema)],
+  password);
 
-  // Retrieve all devices
-//   router.get("/", findAll);
-
-
-router.post("/verify-request", verifyStatus);
-
-  // Retrieve a single  devices with id
-  router.get("/:id", findOne);
-
-
-
-  // Update a devices with id
-//   router.put("/:id", update);
-
-  // Delete a devices with id
-//   router.delete("/:id", destroy);
-
-  // Delete all devices
-//   router.delete("/", destroyAll);
-
-  app.use("/api/settings",  middleware , router);
+  app.use(
+    "/api/settings",
+    router
+  );
 };
