@@ -7,10 +7,13 @@ const authenticate = function (req, res, next) {
       console.log("here");
       return next(err);
     }
+    console.log('user =>' , user )
 
     if (!user) {
-      return res.json(unauthorized());
+      return res.send(unauthorized());
     }
+    console.log('here' )
+    console.log('user =>',  user)
     req.user = user;
     return next();
   })(req, res, next);

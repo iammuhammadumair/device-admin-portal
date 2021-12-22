@@ -73,7 +73,7 @@ zh-CN:
         @click="() => noclose === false && emit('close')"
       ></div>
       <div class="modal-content">
-        <div class="modal-card">
+        <div class="modal-card">v-modal-close ml-auto
           <header class="modal-card-head">
             <h3>{{ title }}</h3>
             <button

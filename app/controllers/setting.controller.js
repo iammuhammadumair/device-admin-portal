@@ -51,4 +51,23 @@ const verifyStatus = (req, res) => {
   return res.json(success());
 };
 
-export { create, verifyStatus, password };
+
+const profile = async (req, res) => {
+    try {
+        console.log('req.user.id =>' ,  req.user)
+      const user = await User.findOne({
+        where: req.user.id,
+      });
+
+      return res.send(success({
+        data: user,
+      }));
+    } catch (error) {
+      console.log("error =>", error);
+      return res.send(internalServerError({
+          message: error.message
+      }));
+    }
+  };
+
+export { create, verifyStatus, password , profile };

@@ -16,6 +16,9 @@ export const useUserSession = defineStore('userSession', () => {
   function setUser(newUser: Partial<UserData>) {
     user.value = newUser
   }
+  function getUser() {
+    return user.value
+  }
 
   function setToken(newToken: string) {
     token.value = newToken
@@ -39,5 +42,6 @@ export const useUserSession = defineStore('userSession', () => {
     setUser,
     setToken,
     setLoading,
+    getUser,
   } as const
 })

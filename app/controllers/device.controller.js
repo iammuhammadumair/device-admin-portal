@@ -1,4 +1,4 @@
-import { ActiveDevice, Device, ActiveCode, Sequelize } from "../models";
+import { ActiveDevice, Device, ActiveCode, Sequelize, User } from "../models";
 
 import {
   internalServerError,
@@ -193,4 +193,33 @@ const availables = async (req, res) => {
   }
 };
 
-export { availables, create, findAll, findOne, update, destroy, destroyAll };
+const initialRequirement = async (req, res) => {
+  try {
+    const { device, platform } = req.body;
+
+    await Device.create({ ...device, user_id: req.user.id });
+
+    await User.update(
+      { platform_id: platform.platform },
+      {
+        where: { id: req.user.id },
+      }
+    );
+
+    return res.send(success());
+  } catch (error) {
+    console.log("error =>", error);
+    return res.send(internalServerError());
+  }
+};
+
+export {
+  availables,
+  create,
+  findAll,
+  findOne,
+  update,
+  destroy,
+  destroyAll,
+  initialRequirement,
+};

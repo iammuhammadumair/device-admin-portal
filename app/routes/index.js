@@ -9,6 +9,7 @@ import settingRoutes from "./setting.routes";
 // import passport from "../../app/auth/passport.js";
 import authenticate from "../middlewares/authentication.middleware";
 const authValidation = (req, res, next) => authenticate(req, res, next);
+console.log('auth =>' , authValidation)
 export default (app) => {
   authRoutes(app);
   activeCodeRoutes(app, authValidation);

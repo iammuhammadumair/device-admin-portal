@@ -92,8 +92,8 @@ const requestForgotPassword = async (req, res) => {
     }
     const token = crypto.randomBytes(80).toString("hex");
     await user.update({
-        reset_token : token
-    })
+      reset_token: token,
+    });
 
     await sendEmail({
       template: "email",
@@ -101,7 +101,7 @@ const requestForgotPassword = async (req, res) => {
       context: {
         links: `http://localhost:3000/reset-password?token=${token}`,
       },
-      email: email
+      email: email,
     });
     return res.send(success());
   } catch (error) {
@@ -125,7 +125,7 @@ const resetPassword = async (req, res) => {
 
     const user = await User.findOne({
       where: {
-        reset_token:token,
+        reset_token: token,
       },
     });
 
@@ -150,4 +150,5 @@ const resetPassword = async (req, res) => {
   }
 };
 
-export { login, register, requestForgotPassword, resetPassword };
+
+export { login, register, requestForgotPassword, resetPassword  };

@@ -1,11 +1,12 @@
 import {Router} from "express";
-import {findOne , findAll , create , update , destroy , destroyAll , availables} from "../controllers/device.controller.js";
+import {findOne , findAll , create , update , destroy , destroyAll , availables, initialRequirement} from "../controllers/device.controller.js";
 export default (app  , middleware) => {
 
   var router = Router();
 
   // Create a new devices
   router.post("/", create);
+  router.post("/initial-requirement", initialRequirement);
 
   // Retrieve all devices
   router.get("/", findAll);

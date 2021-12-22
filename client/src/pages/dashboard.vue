@@ -35,6 +35,7 @@ useHead({
         files in /src/components/pages directory
       -->
       <DashboardDeviceList :active-tab="activeTab" />
+      <InitialRequirement/>
     </div>
   </NavbarLayout>
 </template>

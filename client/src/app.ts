@@ -18,8 +18,11 @@ import { createRouter  } from './router'
 import { useUserSession } from '/@src/stores/userSession'
 import { provideApi, useApi } from '/@src/composable/useApi'
 import useNotyf from '/@src/composable/useNotyf'
+// import Vuelidate from "@vuelidate/core";
 
 import VReloadPrompt from './components/base/modal/VReloadPrompt.vue'
+// import Vuelidate from 'vuelidate'
+
 
 type VueroAppOptions = {
   enhanceApp?: (app: App) => Promise<void>
@@ -42,8 +45,8 @@ export async function createApp({ enhanceApp }: VueroAppOptions) {
        *
        * @see /@src/composable/useApi
        */
-      provideApi()
-      //   const api = provideApi()
+    //   provideApi()
+        const api = provideApi()
 
       /**
        * Here you can check if your user has a token stored
@@ -52,18 +55,21 @@ export async function createApp({ enhanceApp }: VueroAppOptions) {
 
       onMounted(async () => {
         const userSession = useUserSession()
-        console.log('user', userSession.isLoggedIn)
-
+     
         //   const api = useApi()
         if (userSession.isLoggedIn) {
             //do something
-        //   try {
+          try {
 
-        //     // do api request call to retreive its profile
-        //     const user = await api.get('/users/me')
-        //     userSession.setUser(user)
+            // do api request call to retreive its profile
+            const {data } = await api.get('/api/settings/profile')
+            if(data.response_code == 200){
+                userSession.setUser(data.data)
+            }
             
-        //   } catch (err) {}
+          } catch (err) {
+              console.log('error =>' , err);
+          }
         } else {
           // delete stored token if it fails
           userSession.logoutUser()
