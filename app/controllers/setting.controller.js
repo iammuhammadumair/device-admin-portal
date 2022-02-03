@@ -1,12 +1,12 @@
 // import { request } from "express";
-import { User } from "../models";
-import { encrypt } from "../utils/bcrypt.util";
+import { User } from "../models/index.js";
+import { encrypt } from "../utils/bcrypt.util.js";
 
 import {
   internalServerError,
   success,
   unprocessableEntity,
-} from "../utils/response.util";
+} from "../utils/response.util.js";
 
 const create = async (req, res) => {
   const { platform_id, username, password } = req.body;

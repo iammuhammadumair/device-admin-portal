@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import passport from "./app/auth/passport.js";
 import routes from "./app/routes/index.js";
 
-import * as db from "./app/models/index";
+// import * as db from "./app/models/index";
 
 
 // db.sequelize.sync({ force: true }).then(() => {

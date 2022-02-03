@@ -31,32 +31,27 @@ const api: any = useApi()
 // })
 
 onMounted(async () => {
-  if (!isLoading.value) {
-    isLoading.value = true
-    try {
-      const response = await api.get('/api/codes', {
-        // params: {
-        //   activation: 1,
-        // },
-      })
+	if (!isLoading.value) {
+		isLoading.value = true
+		try {
 
-      const { response_code, data, message } = (await response.data) || {}
-      if (response_code == 200) {
-        devices.value = data
-        console.log('devices =>', devices.value)
-      }
-    } catch (error) {
-      console.log('error')
-    }
-    isLoading.value = false
-  }
+			const response = await api.get('/api/codes')
+			const { response_code, data } = (await response.data) || {}
+			if (response_code == 200) {
+				devices.value = data
+				isLoading.value = false
+			}
+		} catch (error) {
+			console.log('error')
+		}
+	}
 })
 </script>
 
 <template>
-  <div>
-    <div class="list-view-toolbar">
-      <!-- <VControl icon="feather:search">
+	<div>
+		<div class="list-view-toolbar">
+			<!-- <VControl icon="feather:search">
         <input
           v-model="filters"
           class="input custom-text-filter"
@@ -66,64 +61,73 @@ onMounted(async () => {
         <div class="form-icon">
           <i aria-hidden="true" class="iconify" data-icon="feather:search"></i>
         </div>
-      </VControl> -->
-      <div class="ml-auto">
-        <VButton
-          color="primary"
-          outlined
-          raised
-          :to="{ name: 'codes-create' }"
-        >
-           Add Code
-        </VButton>
-      </div>
-    </div>
+			</VControl>-->
+			<div class="ml-auto">
+				<VButton color="primary" outlined raised :to="{ name: 'codes-create' }">Add Code</VButton>
+			</div>
+		</div>
 
-    <div class="page-content-inner">
-      <!--List-->
-      <div class="list-view list-view-v3">
-        <!--List Empty Search Placeholder -->
-        <VPlaceholderPage
-          :class="[devices.length !== 0 && 'is-hidden']"
-          title="We couldn't find any matching results."
-          subtitle="Too bad. Looks like we couldn't find any matching results for the
-          search terms you've entered. Please try different search terms or
-          criteria."
-          larger
-        >
-          <template #image>
-            <img
-              class="light-image"
-              src="/@src/assets/illustrations/placeholders/search-3.svg"
-              alt=""
-            />
-            <img
-              class="dark-image"
-              src="/@src/assets/illustrations/placeholders/search-3-dark.svg"
-              alt=""
-            />
-          </template>
-        </VPlaceholderPage>
+		<div class="page-content-inner">
+			<!--List-->
+			<div class="list-view list-view-v3">
+				<VPlaceholderPage
+					v-if="isLoading"
+					title="Loading results..."
+					subtitle="Loading results it may take some, please be patient ..."
+					larger
+				>
+				<template #image>
+						<img
+							class="light-image"
+							src="/@src/assets/illustrations/placeholders/search-1.svg"
+							alt="saerch"
+						/>
+						<img
+							class="dark-image"
+							src="/@src/assets/illustrations/placeholders/search-1-dark.svg"
+							alt="search"
+						/>
+				</template>
+				</VPlaceholderPage>
+				<VPlaceholderPage
+					v-else-if="!isLoading && devices.length ===0"
+					title="We couldn't find any matching results."
+					subtitle="Too bad. Looks like we couldn't find any matching results for the
+					search terms you've entered. Please try different search terms or
+					criteria."
+					larger
+				>
+					<template #image>
+						<img
+							class="light-image"
+							src="/@src/assets/illustrations/placeholders/search-3.svg"
+							alt="saerch"
+						/>
+						<img
+							class="dark-image"
+							src="/@src/assets/illustrations/placeholders/search-3-dark.svg"
+							alt="search"
+						/>
+					</template>
+				</VPlaceholderPage>
 
-        <div class="list-view-inner">
-          <transition-group name="list-complete" tag="div">
-            <!--Item-->
-            <div v-for="item in devices" :key="item.id" class="list-view-item">
-              <div class="list-view-item-inner">
-                <img
-                  class="avatar"
-                  :src="`http://${item.ota}.jpg`"
-                  alt=""
-                  @error.once="
-                    (event) => useViaPlaceholderError(event, '150x150')
-                  "
-                />
-                <div class="meta-left">
-                  <h3>
-                    {{ item.codename }}
-                  </h3>
-                  <span>
-                    <!-- <i
+				<div class="list-view-inner">
+					<transition-group name="list-complete" tag="div">
+						<!--Item-->
+						<div v-for="item in devices" :key="item.id" class="list-view-item">
+							<div class="list-view-item-inner">
+								<img
+									class="avatar"
+									:src="`http://${item.ota}.jpg`"
+									alt="avatar"
+									@error.once="
+										(event) => useViaPlaceholderError(event, '150x150')
+									"
+								/>
+								<div class="meta-left">
+									<h3>{{ item.codename }}</h3>
+									<span>
+										<!-- <i
                         aria-hidden="true"
                         class="iconify"
                         data-icon="feather:map-pin"
@@ -132,246 +136,235 @@ onMounted(async () => {
                       <i
                         aria-hidden="true"
                         class="fas fa-circle icon-separator"
-                      ></i> -->
-                    <i
-                      aria-hidden="true"
-                      class="iconify"
-                      data-icon="feather:clock"
-                    ></i>
-                    <span>{{ (new Date(item.start_date_time)).toLocaleString() }}</span>
-                    -
-                    <!-- <span>{{ item.end_date_time }}</span> -->
-                    <span>{{ (new Date(item.end_date_time)).toLocaleString() }}</span>
-                    <i
-                      aria-hidden="true"
-                      class="fas fa-circle icon-separator"
-                    ></i>
-                    <i
-                      aria-hidden="true"
-                      class="iconify"
-                      data-icon="feather:check-circle"
-                    ></i>
-                    <span>{{ item.owner_name }}</span>
-                  </span>
-                </div>
-                <div class="meta-right">
-                  <div class="buttons">
-                    <VIconButton
-                      :to="{
-                        name: 'codes-edit-id',
-                        params: { id: item.id },
-                      }"
-                      icon="feather:edit"
-                      class="button is-link"
-                    />
-                    <!-- <VIconButton
+										></i>-->
+										<i aria-hidden="true" class="iconify" data-icon="feather:clock"></i>
+										<span>{{ (new Date(item.start_date_time)).toLocaleString() }}</span>
+										-
+										<!-- <span>{{ item.end_date_time }}</span> -->
+										<span>{{ (new Date(item.end_date_time)).toLocaleString() }}</span>
+										<i aria-hidden="true" class="fas fa-circle icon-separator"></i>
+										<i aria-hidden="true" class="iconify" data-icon="feather:check-circle"></i>
+										<span>{{ item.owner_name }}</span>
+									</span>
+								</div>
+								<div class="meta-right">
+									<div class="buttons">
+										<VIconButton
+											:to="{
+												name: 'codes-edit-id',
+												params: { id: item.id },
+											}"
+											icon="feather:edit"
+											class="button is-link"
+										/>
+										<!-- <VIconButton
                         icon="feather:x-square"
                         class="button is-danger"
-                      /> -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </transition-group>
-        </div>
+										/>-->
+									</div>
+								</div>
+							</div>
+						</div>
+					</transition-group>
+				</div>
 
-        <!-- <VFlexPagination
+				<!-- <VFlexPagination
             v-if="devices.length > 10"
             :item-per-page="10"
             :total-items="devices.length"
             :current-page="1"
             :max-links-displayed="7"
-          /> -->
-      </div>
-    </div>
-  </div>
+				/>-->
+			</div>
+		</div>
+	</div>
 </template>
 
 <style lang="scss">
-@import '../../../../scss/abstracts/_mixins.scss';
+@import "../../../../scss/abstracts/_mixins.scss";
 
 .list-view-v3 {
-  .list-view-item {
-    @include vuero-r-card();
+	.list-view-item {
+		@include vuero-r-card();
 
-    margin-bottom: 16px;
-    padding: 16px;
+		margin-bottom: 16px;
+		padding: 16px;
 
-    .list-view-item-inner {
-      display: flex;
-      align-items: center;
+		.list-view-item-inner {
+			display: flex;
+			align-items: center;
 
-      > img {
-        width: 100%;
-        max-width: 60px;
-        min-width: 60px;
-        max-height: 60px;
-        min-height: 60px;
-        border-radius: var(--radius-rounded);
-        border: 1px solid var(--fade-grey);
-      }
+			> img {
+				width: 100%;
+				max-width: 60px;
+				min-width: 60px;
+				max-height: 60px;
+				min-height: 60px;
+				border-radius: var(--radius-rounded);
+				border: 1px solid var(--fade-grey);
+			}
 
-      .meta-left {
-        margin-left: 16px;
+			.meta-left {
+				margin-left: 16px;
 
-        h3 {
-          font-family: var(--font-alt);
-          color: var(--dark-text);
-          font-weight: 500;
-          font-size: 1.1rem;
-          line-height: 1;
-        }
+				h3 {
+					font-family: var(--font-alt);
+					color: var(--dark-text);
+					font-weight: 500;
+					font-size: 1.1rem;
+					line-height: 1;
+				}
 
-        > span:not(.tag) {
-          font-size: 0.9rem;
-          color: var(--light-text);
+				> span:not(.tag) {
+					font-size: 0.9rem;
+					color: var(--light-text);
 
-          svg {
-            position: relative;
-            top: 1px;
-            height: 12px;
-            width: 12px;
-          }
+					svg {
+						position: relative;
+						top: 1px;
+						height: 12px;
+						width: 12px;
+					}
 
-          .icon-separator {
-            position: relative;
-            top: -3px;
-            font-size: 5px;
-            color: var(--light-text);
-            padding: 0 8px;
-          }
+					.icon-separator {
+						position: relative;
+						top: -3px;
+						font-size: 5px;
+						color: var(--light-text);
+						padding: 0 8px;
+					}
 
-          .iconify {
-            margin-right: 0.25rem;
-          }
-        }
-      }
+					.iconify {
+						margin-right: 0.25rem;
+					}
+				}
+			}
 
-      .meta-right {
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
+			.meta-right {
+				margin-left: auto;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
 
-        .buttons {
-          margin-bottom: 0;
-          margin-right: 10px;
-        }
-      }
-    }
-  }
+				.buttons {
+					margin-bottom: 0;
+					margin-right: 10px;
+				}
+			}
+		}
+	}
 }
 
 .is-dark {
-  .list-view-v3 {
-    .list-view-item {
-      @include vuero-card--dark();
+	.list-view-v3 {
+		.list-view-item {
+			@include vuero-card--dark();
 
-      .list-view-item-inner {
-        > img {
-          border-color: var(--dark-sidebar-light-12);
-        }
+			.list-view-item-inner {
+				> img {
+					border-color: var(--dark-sidebar-light-12);
+				}
 
-        .meta-left {
-          h3 {
-            color: var(--dark-dark-text) !important;
-          }
-        }
+				.meta-left {
+					h3 {
+						color: var(--dark-dark-text) !important;
+					}
+				}
 
-        .meta-right {
-          .buttons {
-            .button {
-              &:nth-child(2) {
-                background: var(--dark-sidebar-light-2);
-                border-color: var(--dark-sidebar-light-8);
-                color: var(--dark-dark-text);
-                transition: all 0.3s;
+				.meta-right {
+					.buttons {
+						.button {
+							&:nth-child(2) {
+								background: var(--dark-sidebar-light-2);
+								border-color: var(--dark-sidebar-light-8);
+								color: var(--dark-dark-text);
+								transition: all 0.3s;
 
-                &:hover {
-                  border-color: var(--primary);
-                  color: var(--primary);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+								&:hover {
+									border-color: var(--primary);
+									color: var(--primary);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @media only screen and (max-width: 767px) {
-  .list-view-v3 {
-    .list-view-item {
-      position: relative;
-      padding: 20px;
+	.list-view-v3 {
+		.list-view-item {
+			position: relative;
+			padding: 20px;
 
-      .list-view-item-inner {
-        flex-direction: column;
+			.list-view-item-inner {
+				flex-direction: column;
 
-        > img {
-          margin-bottom: 1rem;
-        }
+				> img {
+					margin-bottom: 1rem;
+				}
 
-        .meta-left {
-          margin-left: 0;
+				.meta-left {
+					margin-left: 0;
 
-          h3 {
-            text-align: center;
-            margin-bottom: 6px;
-          }
+					h3 {
+						text-align: center;
+						margin-bottom: 6px;
+					}
 
-          > span {
-            margin-bottom: 16px;
-          }
+					> span {
+						margin-bottom: 16px;
+					}
 
-          .icon-list {
-            flex-wrap: wrap;
+					.icon-list {
+						flex-wrap: wrap;
 
-            > span {
-              flex-direction: column;
-              text-align: center;
-              margin: 10px;
-              width: calc(33.3% - 20px);
+						> span {
+							flex-direction: column;
+							text-align: center;
+							margin: 10px;
+							width: calc(33.3% - 20px);
 
-              i {
-                margin: 0;
-              }
-            }
-          }
-        }
+							i {
+								margin: 0;
+							}
+						}
+					}
+				}
 
-        .meta-right {
-          margin: 16px 0 0 0;
-          width: 100%;
+				.meta-right {
+					margin: 16px 0 0 0;
+					width: 100%;
 
-          .buttons {
-            margin: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
+					.buttons {
+						margin: 0;
+						width: 100%;
+						display: flex;
+						justify-content: space-between;
 
-            .button {
-              width: 100%;
-              margin: 10px 0;
+						.button {
+							width: 100%;
+							margin: 10px 0;
 
-              &:first-child {
-                width: 100%;
-                max-width: 240px;
-                margin: 10px auto;
-              }
+							&:first-child {
+								width: 100%;
+								max-width: 240px;
+								margin: 10px auto;
+							}
 
-              &:nth-child(2) {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                max-width: 35px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+							&:nth-child(2) {
+								position: absolute;
+								top: 10px;
+								right: 10px;
+								max-width: 35px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 </style>

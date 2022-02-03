@@ -45,7 +45,7 @@ const handleSave = async (data: object) => {
         });
         if(response.data.response_code == 200)
             activeModal.value = false;
-        
+
         console.log('response =>', response)
     } catch (error) {
         console.log("error =>", error);

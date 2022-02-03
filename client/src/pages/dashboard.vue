@@ -20,22 +20,22 @@ const activeTab = ref<TabId>('active')
 
 pageTitle.value = 'Dashboard'
 useHead({
-  title: 'Dashboard - Home',
+	title: 'Dashboard - Home',
 })
 </script>
 
 <template>
-  <NavbarLayout>
-    <!-- Content Wrapper -->
-    <div class="page-content-inner">
-      <!--
+	<NavbarLayout>
+		<!-- Content Wrapper -->
+		<div class="page-content-inner">
+			<!--
         Page content goes here
 
-        You can see pages content samples from 
+        You can see pages content samples from
         files in /src/components/pages directory
-      -->
-      <DashboardDeviceList :active-tab="activeTab" />
-      <InitialRequirement/>
-    </div>
-  </NavbarLayout>
+			-->
+			<DashboardDeviceList :active-tab="activeTab" />
+			<InitialRequirement />
+		</div>
+	</NavbarLayout>
 </template>

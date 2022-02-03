@@ -1,13 +1,13 @@
-import dbConfig  from "../config/db.config.js";
+import { Sequelize } from "sequelize";
 
-import deviceModel  from "./devices.model";
+import dbConfig  from "../config/db.config.js";
+import deviceModel  from "./devices.model.js";
 import activeDeviceModel from "./active_devices.model.js";
 import userModel from "./user.model.js";
 import activeCodeModel from "./active_code.model.js";
-import settingModel from "./settings.model";
+import settingModel from "./settings.model.js";
 
 
-import { Sequelize } from "sequelize";
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,

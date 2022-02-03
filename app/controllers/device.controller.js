@@ -1,10 +1,10 @@
-import { ActiveDevice, Device, ActiveCode, Sequelize, User } from "../models";
+import { ActiveDevice, Device, ActiveCode, Sequelize, User } from "../models/index.js";
 
 import {
   internalServerError,
   success,
   unprocessableEntity,
-} from "../utils/response.util";
+} from "../utils/response.util.js";
 
 const { Op } = Sequelize;
 const create = async (req, res) => {

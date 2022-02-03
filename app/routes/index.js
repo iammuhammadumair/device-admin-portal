@@ -1,13 +1,13 @@
-import authRoutes from "./auth.routes";
-import activeCodeRoutes from "./active_code.routes";
-import activeDeviceRoutes from "./active_device.routes";
-import secretInfoRoutes from "./secretinfo";
-import deviceRoutes from "./device.routes";
-import fileUploadRoutes from "./file_upload.routes";
-import settingRoutes from "./setting.routes";
+import authRoutes from "./auth.routes.js";
+import activeCodeRoutes from "./active_code.routes.js";
+import activeDeviceRoutes from "./active_device.routes.js";
+import secretInfoRoutes from "./secretinfo.js";
+import deviceRoutes from "./device.routes.js";
+import fileUploadRoutes from "./file_upload.routes.js";
+import settingRoutes from "./setting.routes.js";
 
 // import passport from "../../app/auth/passport.js";
-import authenticate from "../middlewares/authentication.middleware";
+import authenticate from "../middlewares/authentication.middleware.js";
 const authValidation = (req, res, next) => authenticate(req, res, next);
 console.log('auth =>' , authValidation)
 export default (app) => {

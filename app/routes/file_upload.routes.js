@@ -1,9 +1,9 @@
 import multer from "multer";
-import path from "path";
+// import path from "path";
 // import uuid from "uuid";
-import  {success} from  '../utils/response.util'
 // import {uuid} from "uuid"._v4
 import {Router} from 'express';
+import  {success} from  '../utils/response.util.js'
 export default (app) => {
 
 

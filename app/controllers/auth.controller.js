@@ -1,13 +1,13 @@
-import { User } from "../models";
 import jwt from "jsonwebtoken";
+import { User } from "../models/index.js";
 
 import {
   unprocessableEntity,
   success,
   internalServerError,
-} from "../utils/response.util";
-import { encrypt, compare } from "../utils/bcrypt.util";
-import sendEmail from "../utils/email.util";
+} from "../utils/response.util.js";
+import { encrypt, compare } from "../utils/bcrypt.util.js";
+import sendEmail from "../utils/email.util.js";
 
 import crypto from "crypto";
 

@@ -1,4 +1,4 @@
-import { unauthorized } from "../utils/response.util";
+import { unauthorized } from "../utils/response.util.js";
 import passport from "../../app/auth/passport.js";
 
 const authenticate = function (req, res, next) {

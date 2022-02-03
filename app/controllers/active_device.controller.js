@@ -4,13 +4,13 @@ import {
   Sequelize,
   Device,
   ActiveCode,
-} from "../models";
+} from "../models/index.js";
 
 import {
   internalServerError,
   success,
   unprocessableEntity,
-} from "../utils/response.util";
+} from "../utils/response.util.js";
 
 const {Op} = Sequelize;
 // Create and Save a new UserDevice

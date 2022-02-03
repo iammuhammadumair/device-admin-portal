@@ -1,13 +1,13 @@
 // const { response } = require("express");
 // import { Op } from "sequelize/dist";
-import { ActiveCode, Sequelize } from "../models";
-// import {Sequelize :{Op}} from "sequelize";
 const { Op } = Sequelize;
+import { ActiveCode, Sequelize } from "../models/index.js";
+// import {Sequelize :{Op}} from "sequelize";
 import {
   internalServerError,
   success,
   unprocessableEntity,
-} from "../utils/response.util";
+} from "../utils/response.util.js";
 
 const create = async (req, res) => {
   const { codename, owner_name, start_date_time, end_date_time, device_id } =
