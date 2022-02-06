@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {findOne , findAll , create , update , destroy , destroyAll , availables, initialRequirement} from "../controllers/device.controller.js";
+import {findOne , findAll , create , update , destroy , destroyAll , availables, initialRequirement , homes} from "../controllers/device.controller.js";
 export default (app  , middleware) => {
 
   var router = Router();
@@ -16,6 +16,9 @@ export default (app  , middleware) => {
 
   // Retrieve a single  devices with id
   router.get("/availables", availables);
+  
+  router.get("/homes", homes);
+
 
   // Retrieve a single  devices with id
   router.get("/:id", findOne);
@@ -28,6 +31,8 @@ export default (app  , middleware) => {
 
   // Delete all devices
   router.delete("/", destroyAll);
+
+
 
   app.use("/api/devices",  middleware , router);
 };

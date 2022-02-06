@@ -17,6 +17,7 @@ export default (app) => {
   activeDeviceRoutes(app, authValidation);
   secretInfoRoutes(app, authValidation);
   fileUploadRoutes(app, authValidation);
-  settingRoutes(app,  authValidation)
+  settingRoutes(app,  authValidation);
+  
 
 };
