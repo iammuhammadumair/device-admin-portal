@@ -6,6 +6,7 @@ import activeDeviceModel from "./active_devices.model.js";
 import userModel from "./user.model.js";
 import activeCodeModel from "./active_code.model.js";
 import settingModel from "./settings.model.js";
+import userKeyModel from "./user_key.model.js";
 
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
@@ -26,6 +27,7 @@ const ActiveDevice = activeDeviceModel(sequelize, Sequelize)
 const User = userModel(sequelize, Sequelize);
 const ActiveCode = activeCodeModel(sequelize, Sequelize);
 const Setting = settingModel(sequelize ,  Sequelize);
+const UserKey = userKeyModel(sequelize ,  Sequelize);
 
 //Device Relationships
 Device.hasOne(ActiveDevice , {foreignKey: 'deviceId', 'as' : 'active_device'}); // Will add companyId to user
@@ -45,7 +47,8 @@ export  {
     Device,
     ActiveCode,
     ActiveDevice,
-    Setting
+    Setting,
+	UserKey
 };
 
 

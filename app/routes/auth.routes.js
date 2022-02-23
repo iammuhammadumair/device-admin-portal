@@ -2,7 +2,7 @@ import requestValidator from "../middlewares/request_validator.middleware.js";
 import signupSchema from "../schemas/signup.schema.js";
 
 import { login, register , requestForgotPassword, resetPassword } from "../controllers/auth.controller.js";
-
+import {list} from '../controllers/platform.controller.js';
 import { Router } from "express";
 import changePasswordSchema from "../schemas/change_password.schema.js";
 
@@ -15,6 +15,7 @@ export default (app) => {
   router.post("/signup", requestValidator(signupSchema), register);
   router.post("/forgot-password", requestForgotPassword);
   router.post("/reset-password", requestValidator(changePasswordSchema), resetPassword);
+  router.get("/list",  list);
 
 
   app.use("/api", router);
